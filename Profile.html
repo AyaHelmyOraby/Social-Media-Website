@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Project</title>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./node_modules/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f0ecff;
+        }
+
+        .card {
+            margin-top: 30px;
+        }
+
+        #liveAlertPlaceholder {
+            position: fixed;
+            bottom: 20px;
+            /* Adjust the distance from the bottom */
+            right: 20px;
+            /* Adjust the distance from the right */
+            z-index: 1050;
+            /* Ensure it's on top of other elements */
+        }
+
+        .custom-alert {
+            width: auto;
+            /* Adjust width if needed */
+            min-width: 200px;
+            /* Set a minimum width if necessary */
+        }
+
+
+
+        .add-button {
+            background-color: white;
+            color: blue;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border: none;
+            outline: none;
+
+            /* Positioning */
+            position: fixed;
+            bottom: 20px;
+            /* Distance from the bottom of the screen */
+            right: 20px;
+            /* Distance from the right of the screen */
+
+            font-size: 40px;
+        }
+   
+       
+    .card-body {
+        background-color: #f8f9fa; /* Soft background color */
+        border-radius: 10px;
+    }
+
+    /* #imageuser {
+        margin-bottom: 15px;
+    } */
+
+    .big-number {
+        font-size: 2.5rem; /* Larger font size for numbers */
+        font-weight: bold;
+        color: #343a40; /* Darker color for emphasis */
+    }
+
+    .small-text {
+        font-size: 1rem; /* Normal font size for labels */
+        color: #6c757d; /* Muted color for labels */
+    }
+
+    .card-body .row {
+        padding: 10px 0;
+    }
+
+    .mb-2 {
+        font-size: 1.1rem; /* Slightly larger text */
+        color: #495057; /* Consistent text color */
+    }
+</style>
+    </style>
+
+
+
+</head>
+
+<body>
+
+    <div id="liveAlertPlaceholder" class="show fade"></div>
+    <!-- <button type="button" class="btn btn-primary" id="liveAlertBtn">Show live alert</button> -->
+
+    <div id="addbutton" onclick="addbtnclicked()">
+        <button class="add-button">
+            <i class="material-icons">+</i>
+        </button>
+    </div>
+
+
+
+    <div class="modal fade" id="loginmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel"> Login</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">UserName</label>
+                            <input type="text" class="form-control" id="name-id" value="qwert87654">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Password</label>
+                            <input type="password" class="form-control" id="pass-id" value="987000">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="loginfunc()">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="registermodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel"> Register</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">UserName</label>
+                            <input type="text" class="form-control" id="username-register" value="qwert87654">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Password</label>
+                            <input type="password" class="form-control" id="pass-register" value="987000">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Name</label>
+                            <input type="text" class="form-control" id="name-register" value="987000">
+                        </div>
+                        <div class="mb-3">
+                            <label for="post-title" class="col-form-label">Image:</label>
+                            <input type="file" class="form-control" id="image-register">
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="registerfunc()">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="postmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="post-title-label">Add New Post</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form content for adding a post -->
+                    <form>
+                        <div class="mb-3">
+                            <label for="post-title" class="col-form-label">Title:</label>
+                            <input type="text" class="form-control" id="post-address">
+                            <input type="hidden" id="post-id-input" value="">
+                            <!-- //denoted -->
+                        </div>
+                        <div class="mb-3">
+                            <label for="post-content" class="col-form-label">Content:</label>
+                            <textarea class="form-control" id="content-post"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="post-title" class="col-form-label">Image:</label>
+                            <input type="file" class="form-control" id="image-post">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="submit-post" onclick="creatingpost()">Save
+                        Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="deletemodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="post-title-label"> Are you sure you want to delete this post </h1>
+                    <input type="hidden" id="post-id-delete" value="">
+
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> No </button>
+
+                    <button type="button" class="btn btn-danger" id="submit-post" onclick="deletepost()"> Yes, Delete
+                        Post </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+   
+</div>
+
+<div class="container ">
+    <div class="d-flex justify-content-center ">
+
+        <div class="col-9">
+
+            <nav class="navbar navbar-expand-lg bg-light shadow  rounded  pt-1">
+                <div class="container-fluid">
+                    <a class="navbar-brand font-bold" href="./Home.html">
+                        <b href="">Philomath</b></a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" onclick="homeclicked()"   href="#">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " style=" cursor: pointer" onclick="profclicked()">Profile</a>
+                            </li>
+                            <li class="nav-item">
+            <!-- <a class="nav-link" href="#">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" aria-disabled="true">Disabled</a> -->
+
+
+
+                        </ul>
+                        <div class="d-flex  w-100  justify-content-end">
+                            <button id="login-btn" type="button" class="btn btn-outline-success mx-5"
+                                data-bs-toggle="modal" data-bs-target="#loginmodal"
+                                data-bs-whatever="@mdo">Login</button>
+
+                            <button id="register-btn" type="button" class="btn btn-outline-success"
+                                data-bs-toggle="modal" data-bs-target="#registermodal">Register</button>
+
+
+                            <!-- <button type="button" class="btn btn-outline-success mx-5" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Logout</button> -->
+                        </div>
+
+                        <div class="d-flex  w-100  justify-content-end" id="logoutdiv">
+
+                            <img id="imageuser" class="rounded-circle border border-2" src="" alt=""
+                                style="width:40px; height:40px;">
+                            <b id="usernameuser">@philomath</b>
+
+
+                            <button id="logout-btn" type="button" onclick="logout()"
+                                class="btn btn-outline-danger mx-5" data-bs-toggle="modal"
+                                data-bs-whatever="@mdo">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+ 
+
+
+
+    <div class="container " style="height: 1000px;">
+        <div class="d-flex justify-content-center mt-3">
+            <div class="col-9">
+                <div id="posts">
+                    <div class="card shadow p-3">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center">
+                                    <img id="user-profile-image" class="rounded-circle border border-2" src="./profilepics/3003741.jpg" alt=""
+                                         style="width:150px; height:150px;">
+                                </div>
+                                <div id="main-info"class="col-md-5">
+                                    <div class="mb-2"class="user-main-info" id="main-info-email">araby85832gmail.com</div>
+                                    <div class="mb-2" class="user-main-info" id="main-info-name">Aya Oraby</div>
+                                    <div class="mb-2"class="user-main-info" id="main-info-username">Philomath</div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="d-flex justify-content-around">
+                                        <div>
+                                            <div class="big-number" id="postcount">120</div>
+                                            <div class="small-text">Posts</div>
+                                        </div>
+                                        <div>
+                                            <div class="big-number" id="commentcount">45</div>
+                                            <div class="small-text">Comments</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h1 class ="mt-5"> <span id="nameofpost"> Aya</span>'s Posts </h1>
+
+                    <!-- New Card -->
+                     <div id="user-posts">
+                        <div class="card shadow">
+                            <div class="card-header">
+                                <img id="post-image-user" class="rounded-circle border border-2" src="./profilepics/3003741.jpg" alt=""
+                                     style="width:40px; height:40px;">
+                                <b>@philomath</b>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <img class="w-100" src="./profilepics/3003741.jpg" style="width: 100%;">
+                                    <h1 style="color: rgb(82, 79, 79);font-size: small;" class="mt-1">2 min ago</h1>
+                                    <h1 style="font-size: small;"> Hello world</h1>
+                                    <h2 style="font-size: small;"> Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                                        Aut quisquam cum officiis vero quos ducimus recusandae sint delectus id nesciunt
+                                        accusamus corrupti optio tenetur ullam in, a provident. Libero, dolor.</h2>
+                                    <hr>
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                             class="bi bi-pen" viewBox="0 0 16 16">
+                                            <path
+                                                d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+                                        </svg>
+                                        <span>3 comments</span>
+                                    </div>
+                                </h5>
+                            </div>
+                        </div>
+                    <!-- End of New Card -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+   
+
+
+    
+              
+</body>
+
+<!-- <script src="./mainlogic.js"></script> -->
+<!-- <script> src="./profile_script.js"</script> -->
+
+<script>
+    const baseurl = "https://tarmeezAcademy.com/api/v1/"
+let currentpage = 1;
+let lastpage = 1
+window.addEventListener("scroll", function()
+{
+// //     const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
+// //     if (endOfPage && currentpage < lastpage)
+// // {
+// //     // getposts(false,currentpage+1);
+// //     currentpage = currentpage + 1  
+// //     getposts(false,currentpage)
+// }
+}
+); 
+ 
+
+function getuser(){
+
+
+const urlparams = new URLSearchParams(window.location.search)
+const id = urlparams.get("userid")
+console.log(id)
+
+
+const baseurl = "https://tarmeezAcademy.com/api/v1/"
+   // const baseurl = "https://tarmeezAcademy.com/api/v1/"
+axios.get(`${baseurl}users/${id}`)
+   .then(function (response) {
+    console.log(response.data)
+    console.log("aya")
+
+    const user = response.data.data;
+    document.getElementById("main-info-email").innerHTML = user.email;
+    document.getElementById("main-info-name").innerHTML = user.name;
+    document.getElementById("main-info-username").innerHTML = user.username;
+    document.getElementById("postcount").innerHTML = user.posts_count;
+    document.getElementById("commentcount").innerHTML = user.comments_count;
+    document.getElementById("user-profile-image").src = user.profile_image; // Updated ID
+    
+    document.getElementById("nameofpost").innerHTML = user.username;
+    
+    // <div class="mb-2"class="user-main-info" id="main-info-email">araby85832gmail.com</div>
+    // <div class="mb-2" class="user-main-info" id="main-info-name">Aya Oraby</div>
+    // <div class="mb-2"class="user-main-info" id="main-info-username">Philomath</div>
+
+    
+
+
+   })
+   .catch(function (error) {
+       // handle error
+       console.log(error);
+   })
+}
+
+getuser()
+getposts()
+getcurrentuser()
+getUI()
+
+function getcurrentuser() {
+    const storageUser = localStorage.getItem("user");
+
+    return storageUser ? JSON.parse(storageUser) : null;
+}
+   function getUI() {
+    const token1 = localStorage.getItem("token");
+    const login = document.getElementById("login-btn");
+    const register = document.getElementById("register-btn");
+    const logout = document.getElementById("logoutdiv");
+    const addposter = document.getElementById("addbutton");
+ 
+    if (token1 == null) {
+        login.style.visibility = "visible";
+        register.style.visibility = "visible";
+        addposter.style.setProperty("display", "none", "important");
+        logout.style.setProperty("display", "none", "important");
+    } else {
+        login.style.visibility = "hidden";
+        register.style.visibility = "hidden";
+        addposter.style.setProperty("display", "flex", "important");
+        logout.style.setProperty("display", "flex", "important");
+ 
+        const user1 = getcurrentuser();
+        if (user1) {
+            document.getElementById("usernameuser").innerHTML = user1.username;
+            document.getElementById("imageuser").src = user1.profile_image || ''; // Ensure a valid image URL or set a default
+        } else {
+            console.error("User data not found.");
+        }
+    }
+ }
+
+ 
+
+function getposts() {
+const baseurl = "https://tarmeezAcademy.com/api/v1/";
+const urlparams = new URLSearchParams(window.location.search);
+const userId = urlparams.get("userid");
+
+axios.get(`${baseurl}users/${userId}/posts`)
+    .then(function(response) {
+        const posts = response.data.data;
+        const user = getcurrentuser(); // Get the current logged-in user
+        const userId = user ? user.id : null; // Current user ID
+
+        document.getElementById("user-posts").innerHTML = "";
+
+        for (const post of posts) {
+            const author = post.author;
+            const isAuthor = userId && post.author.id === userId; // Check if the current user is the author
+
+            let posttitle = post.title || "";
+
+            // Conditional buttons
+            const editButton = isAuthor ? `<button id="edit-btn" class='btn btn-secondary btn-sm' onclick="editpostbtnlicked('${encodeURIComponent(JSON.stringify(post))}')">Edit</button>` : '';
+            const deleteButton = isAuthor ? `<button id="delete-btn" class='btn btn-danger btn-sm ms-2' onclick="deletepostbtnlicked('${encodeURIComponent(JSON.stringify(post))}')">Delete</button>` : '';
+
+            let content = `
+            <div class="card shadow">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <img class="rounded-circle border border-2" src="${author.profile_image}" alt="" style="width:40px; height:40px;">
+                        <b class="ms-2">${author.username}</b>
+                    </div>
+                    <div>
+                        ${editButton}
+                        ${deleteButton}
+                    </div>
+                </div>
+                <div class="card-body" onclick="postclicked(${post.id})" style="cursor:pointer">
+                    <img class="w-100 mb-3" src="${post.image}" alt="Post image">
+                    <h6 class="text-muted">${post.created_at}</h6>
+                    <h5 class="card-title">${posttitle}</h5>
+                    <p class="card-text">${post.body}</p>
+                    <hr>
+                    <div class="d-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-pen me-2" viewBox="0 0 16 16">
+                            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                        </svg>
+                        <span>(${post.comments_count}) Comments</span>
+                        <span id="post-tags-${post.id}" class="ms-2"></span>
+                    </div>
+                </div>
+            </div>
+            `;
+
+            document.getElementById("user-posts").innerHTML += content;
+
+            const currentposttagID = `post-tags-${post.id}`;
+            document.getElementById(currentposttagID).innerHTML = "";
+
+            for (const tag of post.tags) {
+                let contenttags = `  <button class="btn btn-sm rounded-5" style="color: white; background-color: grey"> ${tag.name} </button>`;
+                document.getElementById(currentposttagID).innerHTML += contenttags;
+            }
+        }
+    })
+    .catch(function(error) {
+        console.log(error);
+    });
+}
+
+
+ 
+function profclicked()
+{ 
+    // alert("done")
+    const user =getcurrentuser()
+    const userId = user.id
+    
+    window.location =`Profile.html?userid=${userId}`
+}
+
+
+
+function editpostbtnlicked(postobject)
+{
+   
+    const postIdInput = document.getElementById("post-id-input");
+
+    const postId = postIdInput ? postIdInput.value.trim() : '';
+   
+  
+    let post =JSON.parse(decodeURIComponent(postobject))
+     console.log("clicked")
+     console.log(post)
+     
+     document.getElementById("submit-post").innerHTML="Update"
+     document.getElementById("post-title-label").innerHTML="Edit Post"
+     document.getElementById("post-id-input").value=post.id
+     document.getElementById("post-address").value=post.title
+     document.getElementById("content-post").value=post.body
+
+
+
+
+     let modelpost = new bootstrap.Modal(document.getElementById("postmodal"),{})
+     modelpost.toggle()
+}
+
+function creatingpost() {
+    const baseurl = "https://tarmeezAcademy.com/api/v1"; // Ensure there's no trailing slash
+
+    const postIdInput = document.getElementById("post-id-input");
+    const postId = postIdInput ? postIdInput.value.trim() : '';
+    const isCreate = !postId; // Determine if creating a new post
+
+    const title = document.getElementById("post-address").value;
+    const body = document.getElementById("content-post").value;
+    const image = document.getElementById("image-post").files[0];
+    const token = localStorage.getItem("token");
+
+    let formData = new FormData();
+    formData.append("body", body);
+    formData.append("title", title);
+    formData.append("image", image);
+
+    const headers = {
+        "Authorization": `Bearer ${token}`
+    };
+
+    if (isCreate) {
+        let url = `${baseurl}/posts`; // Default URL
+        // Creating a new post
+        axios.post(url, formData, { headers: headers })
+            .then((response) => {
+                console.log("Post created successfully:", response.data); // Log response data
+                const modal = document.getElementById("postmodal");
+                const modalInstance = bootstrap.Modal.getInstance(modal);
+                modalInstance.hide();
+                showAlert("New Post Has Been Created", "success");
+                getposts();
+            })
+            .catch((error) => {
+                const message = error.response?.data?.message || 'An error occurred';
+                showAlert(message, "danger");
+            });
+    } else {
+
+
+            formData.append("_method", "put")
+            url = `${baseurl}/posts/${postId}`
+        
+        axios.post(url, formData, {
+            headers: headers
+        })
+        .then((response)=>{
+            const modal = document.getElementById("postmodal")
+            const modalInstance = bootstrap.Modal.getInstance(modal)
+            modalInstance.hide()
+            showAlert("New Post Has Been Created", "success")
+            getposts()
+    
+        })
+        .catch((error) => {
+            const message = error.response.data.message
+            showAlert(message, "danger")
+        })
+       
+    }
+}
+
+function deletepostbtnlicked(postobjectdelete) {
+    let post = JSON.parse(decodeURIComponent(postobjectdelete));
+    console.log(post);
+    document.getElementById("post-id-delete").value = post.id;
+
+    let modelpost = new bootstrap.Modal(document.getElementById("deletemodal"), {});
+    modelpost.toggle();
+}
+
+function deletepost() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        console.error("Token not found. User might not be logged in.");
+        showAlert("You're not authorized to delete this post. Please log in.", 'danger');
+        return;
+    }
+
+    const postId = document.getElementById("post-id-delete").value;
+    const url = `${baseurl}posts/${postId}`;
+
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+    };
+
+    axios.delete(url, { headers: headers })
+        .then(function (response) {
+            console.log(response.data);
+
+            const modal = document.getElementById("deletemodal");
+            const modalinstance = bootstrap.Modal.getInstance(modal);
+            modalinstance.hide();
+
+            showAlert("Post deleted successfully", 'success');
+
+            getposts(); // Refresh the posts after deletion
+        })
+        .catch(function (error) {
+            console.error("Error deleting post:", error);
+            if (error.response && error.response.status === 401) {
+                showAlert("You're not authorized to delete this post. Please log in.", 'danger');
+            } else {
+                showAlert("Failed to delete the post", 'danger');
+            }
+        });
+}
+
+
+
+function showAlert(message, type) {
+       const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+       const wrapper = document.createElement('div');
+       wrapper.classList.add('custom-alert'); // Add custom class for positioning
+       wrapper.innerHTML = [
+           `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+           `   <div>${message}</div>`,
+           '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+           '</div>'
+       ].join('');
+
+       alertPlaceholder.append(wrapper);
+
+       // Remove the alert after 2 seconds
+       setTimeout(() => {
+           wrapper.remove();
+       }, 2000);
+   }
+
+
+ 
+
+
+</script>
+
+<script src="./mainlogic.js"></script>
+<script src="./main.js"></script>
+<!-- <script src="./profile.js"></script> -->

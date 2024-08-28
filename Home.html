@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Project</title>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./node_modules/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+   
+
+    <style>
+        body {
+            background-color: #f0ecff;
+        }
+
+        .card {
+            margin-top: 30px;
+        }
+
+        #liveAlertPlaceholder {
+            position: fixed;
+            bottom: 20px;
+            /* Adjust the distance from the bottom */
+            right: 20px;
+            /* Adjust the distance from the right */
+            z-index: 1050;
+            /* Ensure it's on top of other elements */
+        }
+
+        .custom-alert {
+            width: auto;
+            /* Adjust width if needed */
+            min-width: 200px;
+            /* Set a minimum width if necessary */
+        }
+
+
+
+        .add-button {
+            background-color: white;
+            color: blue;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border: none;
+            outline: none;
+
+            /* Positioning */
+            position: fixed;
+            bottom: 20px;
+            /* Distance from the bottom of the screen */
+            right: 20px;
+            /* Distance from the right of the screen */
+
+            font-size: 40px;
+        }
+    </style>
+
+
+
+</head>
+<body>
+
+    <div id="liveAlertPlaceholder" class="show fade"></div>
+    <!-- <button type="button" class="btn btn-primary" id="liveAlertBtn">Show live alert</button> -->
+
+    <div id="addbutton" onclick="addbtnclicked()">
+        <button class="add-button">
+            <i class="material-icons">+</i>
+        </button>
+    </div>
+
+
+
+    <div class="modal fade" id="loginmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel"> Login</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">UserName</label>
+                            <input type="text" class="form-control" id="name-id" value="qwert87654">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Password</label>
+                            <input type="password" class="form-control" id="pass-id" value="987000">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="loginfunc()">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="registermodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel"> Register</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">UserName</label>
+                            <input type="text" class="form-control" id="username-register" value="qwert87654">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Password</label>
+                            <input type="password" class="form-control" id="pass-register" value="987000">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Name</label>
+                            <input type="text" class="form-control" id="name-register" value="987000">
+                        </div>
+                        <div class="mb-3">
+                            <label for="post-title" class="col-form-label">Image:</label>
+                            <input type="file" class="form-control" id="image-register">
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="registerfunc()">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="postmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="post-title-label">Add New Post</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form content for adding a post -->
+                    <form>
+                        <div class="mb-3">
+                            <label for="post-title" class="col-form-label">Title:</label>
+                            <input type="text" class="form-control" id="post-address">
+                            <input type="hidden" id="post-id-input" value="">   
+
+                            <!-- //denoted -->
+                        </div>
+                        <div class="mb-3">
+                            <label for="post-content" class="col-form-label">Content:</label>
+                            <textarea class="form-control" id="content-post"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="post-title" class="col-form-label">Image:</label>
+                            <input type="file" class="form-control" id="image-post">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary"id="submit-post" onclick="creatingpost()">Save Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="deletemodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="post-title-label"> Are you sure you want to delete this post </h1>
+                    <input type="hidden" id="post-id-delete" value="">   
+
+                    
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> No </button>
+
+                    <button type="button" class="btn btn-danger"id="submit-post" onclick="deletepost()"> Yes, Delete Post </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="container ">
+        <div class="d-flex justify-content-center ">
+
+            <div class="col-9">
+
+                <nav class="navbar navbar-expand-lg bg-light shadow  rounded  pt-1">
+                    <div class="container-fluid">
+                        <a class="navbar-brand font-bold" href="#">
+                            <b>Philomath</b></a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav">
+                                <li class="nav-item">
+                                    <a class="nav-link active" aria-current="page">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link " style=" cursor: pointer" onclick="profclicked()">Profile</a>
+                                </li>
+                                <!-- <li class="nav-item">
+                <a class="nav-link" href="#">Pricing</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled" aria-disabled="true">Disabled</a> -->
+                              
+
+
+
+                            </ul>
+                            <div class="d-flex  w-100  justify-content-end">
+                                <button id="login-btn" type="button" class="btn btn-outline-success mx-5"
+                                    data-bs-toggle="modal" data-bs-target="#loginmodal"
+                                    data-bs-whatever="@mdo">Login</button>
+
+                                <!-- <button id="register-btn" onclick="registerfunc()" type="button" class="btn btn-outline-success">Register</button> -->
+                                <button id="register-btn" type="button" class="btn btn-outline-success"
+                                    data-bs-toggle="modal" data-bs-target="#registermodal">Register</button>
+
+
+                                <!-- <button type="button" class="btn btn-outline-success mx-5" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Logout</button> -->
+                            </div>
+
+                            <div class="d-flex  w-100  justify-content-end" id="logoutdiv">
+                                
+                                <img id="imageuser" class="rounded-circle border border-2" src="" alt="" style="width:40px; height:40px;">
+                                <b id="usernameuser">@philomath</b>
+        
+                                  
+                                <button id="logout-btn" type="button" onclick="logout()"
+                                    class="btn btn-outline-danger mx-5" data-bs-toggle="modal"
+                                    data-bs-whatever="@mdo">Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <div class="container " style="height: 1000px;">
+        <div class="d-flex justify-content-center mt-3">
+
+            <div class="col-9">
+
+
+                <div id="posts">
+
+                    <div class="card shadow ">
+                        <div class="card-header">
+                            <img id = "imageuser"class="rounded-circle border border-2" src="./profilepics/pic1.png" alt=""
+                                style="width:40px ;height: 40px;">
+                            <!-- <p>@aphilomath</p> -->
+
+                            <b id="usernameuser" > @philomath</b>
+                           
+
+
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+
+
+
+                                <img class="w-100" src="./profilepics/pic1.png" style="width: 100%;">
+
+                                <h1 style="color: rgb(82, 79, 79);font-size: small;" class="mt-1">
+                                    2 min ago
+                                </h1>
+                                <!-- <img class ="w-100"src="./profilepics/3003741.jpg" style="width: 100%;"> -->
+                                <h1 style="font-size: small;"> قبس</h1>
+                                <h2 style="font-size: small;">
+                                    <p class="poem-line">لنا نَبِيٌّ بَنَى بَيْتَاً لِكُلِّ فَتَى</p>
+                                    <p class="poem-line">مِنَّا وَكُلَّ رَضِيعٍ لَفَّهُ بِرِدَا</p>
+                                    <p class="poem-line">وَكُلَّ عُرْسٍ أَتَاهُ للعَرُوسِ أَبَاً</p>
+                                    <p class="poem-line">يُلْقِي التَّحِيَّةَ للأَضْيافِ وَالوُسُدَا</p>
+                                    <p class="poem-line">وَكُلَّ حَرْبٍ أَتَاها للوَرَى أَنَسَاً</p>
+                                    <p class="poem-line">وَاْسْتَعْرَضَ الجُنْدَ قَبْلَ الصَّفِّ وَالعُدَدَا</p>
+                                    <p class="poem-line">مُمَسِّحَاً جَبَهَاتِ الخَيْلِ إِنْ عَثَرَتْ</p>
+                                    <p class="poem-line">حَتَّى تَرَى المُهْرَ مِنْهَا إنْ هَوَى نَهَدَا</p>
+                                    <p class="poem-line">مُذَكِّرَاً جَافِلاتِ الخَيْلِ مَا نَسِيَتْ</p>
+                                    <p class="poem-line">أَنْسَابَهَا كَحَلَ العَيْنَيْنِ وَالجَيَدَا</p>
+                                    <p class="poem-line">حَتَّى لَتَحْسَبُ أَنَّ المُهْرَ أَبْصَرَهُ</p>
+                                    <p class="poem-line">أَو أَنَّ مَسَّاً أَصَابَ المُهْرَ فَانْجَرَدَا</p>
+                                </h2>
+                                <hr>
+
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-pen" viewBox="0 0 16 16">
+                                        <path
+                                            d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+                                    </svg>
+                                    <span>
+
+                                        3 comments
+
+                                        <button class="btn btn-sm rounded-5"
+                                            style="color: white ; background-color: grey"> </button>
+                                    </span>
+
+
+                                </div>
+                        </div>
+                    </div>
+                    <div class="card shadow ">
+                        <div class="card-header">
+                            <img class="rounded-circle border border-2" src="./profilepics/pic1.png" alt=""
+                                style="width:40px ;height: 40px;">
+                            <!-- <p>@aphilomath</p> -->
+
+                            <b> @philomath</b>
+
+
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+
+
+
+                                <img class="w-100" src="./profilepics/3003741.jpg" style="width: 100%;">
+
+                                <h1 style="color: rgb(82, 79, 79);font-size: small;" class="mt-1">
+                                    2 min ago
+                                </h1>
+                                <!-- <img class ="w-100"src="./profilepics/3003741.jpg" style="width: 100%;"> -->
+                                <h1 style="font-size: small;"> Hello world</h1>
+                                <h2 style="font-size: small;"> Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                                    Aut quisquam cum officiis vero quos ducimus recusandae sint delectus id nesciunt
+                                    accusamus corrupti optio tenetur ullam in, a provident. Libero, dolor.</h2>
+                                <hr>
+
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-pen" viewBox="0 0 16 16">
+                                        <path
+                                            d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+                                    </svg>
+                                    <span>
+
+                                        3 comments
+                                    </span>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="card shadow ">
+                        <div class="card-header">
+                            <img class="rounded-circle border border-2" src="./profilepics/pic1.png" alt=""
+                                style="width:40px ;height: 40px;">
+                            <!-- <p>@aphilomath</p> -->
+
+                            <b> @philomath</b>
+
+
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+
+
+
+                                <img class="w-100" src="./profilepics/3003741.jpg" style="width: 100%;">
+
+                                <h1 style="color: rgb(82, 79, 79);font-size: small;" class="mt-1">
+                                    2 min ago
+                                </h1>
+                                <!-- <img class ="w-100"src="./profilepics/3003741.jpg" style="width: 100%;"> -->
+                                <h1 style="font-size: small;"> Hello world</h1>
+                                <h2 style="font-size: small;"> Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                                    Aut quisquam cum officiis vero quos ducimus recusandae sint delectus id nesciunt
+                                    accusamus corrupti optio tenetur ullam in, a provident. Libero, dolor.</h2>
+                                <hr>
+
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-pen" viewBox="0 0 16 16">
+                                        <path
+                                            d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+                                    </svg>
+                                    <span>
+
+                                        3 comments
+                                    </span>
+                                </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+<script src="./main.js"></script>
+<script src="./mainlogic.js"></script>
+<script>
+// Infinite scrolling
+ const baseurl = "https://tarmeezAcademy.com/api/v1/"
+ let currentpage = 1;
+ let lastpage = 1
+window.addEventListener("scroll", function()
+{
+    const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
+    if (endOfPage && currentpage < lastpage)
+{
+    // getposts(false,currentpage+1);
+    currentpage = currentpage + 1  
+    getposts(false,currentpage)
+}
+}
+   
+); 
+
+
+    getUI();
+     
+
+    getposts();
+logout();
+
+
+
+</script>
+<script src="./profile.js">
+    
+</script>
+
+</html>

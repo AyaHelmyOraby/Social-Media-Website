@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tagging Posts & User Registration</title>
+</head>
+<body>
+    <!-- Form to add tags to a post -->
+    <h2>Add Tags to a Post</h2>
+    <form id="tagForm">
+        <label for="postTags">Enter Tags (comma separated):</label>
+        <input type="text" id="postTags" placeholder="e.g., science, biotechnology, research">
+        <button type="submit">Add Tags</button>
+    </form>
+
+    <h3>Tags:</h3>
+    <ul id="tagList"></ul>
+
+    <!-- Form to register a new user -->
+    <h2>Register a New User</h2>
+    <form id="registerForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" required>
+        <br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+        <br><br>
+        <button type="submit">Register</button>
+    </form>
+
+    <h3>Registered Users:</h3>
+    <ul id="userList"></ul>
+
+    <script>
+        // Handle the tagging functionality
+        const tagForm = document.getElementById('tagForm');
+        const tagList = document.getElementById('tagList');
+
+        tagForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const tagsInput = document.getElementById('postTags').value;
+            const tags = tagsInput.split(',').map(tag => tag.trim());
+            
+            tags.forEach(tag => {
+                const li = document.createElement('li');
+                li.textContent = tag;
+                tagList.appendChild(li);
+            });
+
+            document.getElementById('postTags').value = '';
+        });
+
+        // Handle the user registration functionality
+        const registerForm = document.getElementById('registerForm');
+        const userList = document.getElementById('userList');
+
+        registerForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+
+            const li = document.createElement('li');
+            li.textContent = `Username: ${username}, Email: ${email}`;
+            userList.appendChild(li);
+
+            document.getElementById('username').value = '';
+            document.getElementById('email').value = '';
+        });
+    </script>
+</body>
+</html>
